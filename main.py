@@ -19,11 +19,20 @@ def save_book(book, title, id, directory_path=directory_path):
         file.write(book)
 
 
+def check_for_redirect(response):
+    response_history = response.history
+    if response_history:
+        return True
+    return False
+
+
 def get_books(url, count):
     for _ in range(1, count):
         params = {'id': _}
         response = requests.get(url, params=params)
         response.raise_for_status()
+        if check_for_redirect(response):
+            continue
         title = 'book'
         save_book(response.text, title, _)
 

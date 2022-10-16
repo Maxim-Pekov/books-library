@@ -23,11 +23,11 @@ def get_title(url, book_id):
     return title
 
 
-def save_book(book, title, folder='books/'):
+def save_book(book, title, id='', folder='books/'):
     """Создает директорию {directory_path} в корне проекта и сохраняет туда переданный файл"""
 
     pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
-    directory_path = Path() / folder / f'{title}.txt'
+    directory_path = Path() / folder / f'{id}. {title}.txt'
     with open(directory_path, 'w', encoding='utf-8') as file:
         file.write(book)
     return directory_path
@@ -47,8 +47,8 @@ def get_books(url, count):
         response.raise_for_status()
         if check_for_redirect(response):
             continue
-        title = get_title(url, _)
-        save_book(response.text, title)
+        title = get_title(url, book_id=_)
+        save_book(response.text, title, id=_)
 
 
 def main():

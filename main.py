@@ -18,16 +18,22 @@ def get_book_info(url, book_id):
     soup = bs(response.text, 'lxml')
     book_info = soup.body.find('div', id='content').h1.text
     image_url = soup.body.find('div', class_='bookimage').img['src']
+    soup_genres = soup.body.find('span', class_='d_book').find_all('a')
+    if soup_genres:
+        genres = [genre.text for genre in soup_genres]
     soup_comments = soup.find_all('div', class_='texts')
+    comments = []
     if soup_comments:
         comments = [comment.span.text for comment in soup_comments]
-        pprint(comments)
     image = urljoin(base_url, image_url)
-    print(image)
     file_name = book_info.split('::')[0].strip()
     title = sanitize_filename(file_name)
+    print(title)
+    print(image) if image else ''
+    print(genres)
+    print()
     autor = book_info.split('::')[1].strip()
-    return title, image, comments
+    return title, image, comments, genres
 
 
 def save_book(book, title, id='', folder='static/books/'):
@@ -63,9 +69,9 @@ def get_books(url, count):
         response.raise_for_status()
         if check_for_redirect(response):
             continue
-        books_info = get_books_info(url, book_id=_)
-        title = books_info[0]
-        image = books_info[1]
+        book_info = get_book_info(url, book_id=_)
+        title = book_info[0]
+        image = book_info[1]
         save_book(response.text, title, id=_)
         save_image(image, id=_)
 

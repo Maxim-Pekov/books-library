@@ -3,7 +3,7 @@ from pprint import pprint
 import requests
 import pathlib
 
-
+from bs4 import BeautifulSoup as bs
 from pathlib import Path
 
 
@@ -38,8 +38,18 @@ def get_books(url, count):
 
 
 def main():
-    url = "https://tululu.org/txt.php"
-    get_books(url, 10)
+    # url = "https://tululu.org/txt.php"
+    url = "https://tululu.org/b1/"
+    # get_books(url, 10)
+    response = requests.get(url)
+    soup = bs(response.text, 'lxml')
+    # print(soup.body.prettify())
+
+    book_info = soup.body.find('div', id='content').h1.text
+    title = f"Заголовок: {book_info.split('::')[0].strip()}"
+    autor = f"Автор: {book_info.split('::')[1].strip()}"
+    print(title)
+    print(autor)
 
 
 if __name__ == '__main__':

@@ -8,8 +8,8 @@ from pathvalidate import sanitize_filename
 from urllib.parse import urlsplit, urljoin
 
 
-def get_books_info(url, book_id):
-    """Парсит сайт возвращая название книги по ее id"""
+def get_book_info(url, book_id):
+    """Парсит сайт возвращая название книги, обложку, комментарии по ее id"""
 
     url_parse = urlsplit(url)
     base_url = url_parse._replace(path="").geturl()
@@ -18,12 +18,16 @@ def get_books_info(url, book_id):
     soup = bs(response.text, 'lxml')
     book_info = soup.body.find('div', id='content').h1.text
     image_url = soup.body.find('div', class_='bookimage').img['src']
+    soup_comments = soup.find_all('div', class_='texts')
+    if soup_comments:
+        comments = [comment.span.text for comment in soup_comments]
+        pprint(comments)
     image = urljoin(base_url, image_url)
     print(image)
     file_name = book_info.split('::')[0].strip()
     title = sanitize_filename(file_name)
     autor = book_info.split('::')[1].strip()
-    return title, image
+    return title, image, comments
 
 
 def save_book(book, title, id='', folder='static/books/'):

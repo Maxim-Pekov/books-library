@@ -2,14 +2,22 @@ import requests
 import pathlib, os
 
 from pprint import pprint
+import argparse
 from bs4 import BeautifulSoup as bs
 from pathlib import Path
 from pathvalidate import sanitize_filename
 from urllib.parse import urlsplit, urljoin
 
 
+def create_parser():
+    parser = argparse.ArgumentParser(description='программа скачивает нужно кол-во книг по переданным id первой книги и id последней книги')
+    parser.add_argument('first_id', help='id первой книги для скачивания', default=1, type=int, nargs='?')
+    parser.add_argument('last_id', help='id последней книги для скачивания', default=10, type=int, nargs='?')
+    return parser
+
+
 def get_book_info(url, book_id):
-    """Парсит сайт возвращая название книги, обложку, комментарии по ее id"""
+    """Парсит сайт возвращая название книги, обложку, комментарии, жанры по ее id"""
 
     url_parse = urlsplit(url)
     base_url = url_parse._replace(path="").geturl()
@@ -62,8 +70,8 @@ def check_for_redirect(response):
     return False
 
 
-def get_books(url, count):
-    for _ in range(1, count):
+def get_books(url, first_id, last_id):
+    for _ in range(first_id, last_id):
         params = {'id': _}
         response = requests.get(url, params=params)
         response.raise_for_status()
@@ -77,8 +85,13 @@ def get_books(url, count):
 
 
 def main():
+    parser = create_parser()
+    args = parser.parse_args()
+    first_id = args.first_id
+    last_id = args.last_id + 1
+    print(args)
     url = "https://tululu.org/txt.php"
-    get_books(url, 10)
+    get_books(url, first_id, last_id)
 
 
 if __name__ == '__main__':

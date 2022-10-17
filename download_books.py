@@ -16,7 +16,7 @@ def create_argparser():
     return parser
 
 
-def get_book_info(url, book_id):
+def get_book_description(url, book_id):
     """Парсит сайт возвращая название книги, обложку, комментарии, жанры по ее id"""
 
     url_parse = urlsplit(url)
@@ -25,7 +25,7 @@ def get_book_info(url, book_id):
     response = requests.get(link_book_url)
     response.raise_for_status()
     soup = bs(response.text, 'lxml')
-    book_info = soup.body.find('div', id='content').h1.text
+    book_description = soup.body.find('div', id='content').h1.text
     image_url = soup.body.find('div', class_='bookimage').img['src']
     soup_genres = soup.body.find('span', class_='d_book').find_all('a')
     if soup_genres:
@@ -35,7 +35,7 @@ def get_book_info(url, book_id):
     if soup_comments:
         comments = [comment.span.text for comment in soup_comments]
     image = urljoin(base_url, image_url)
-    file_name = book_info.split('::')[0].strip()
+    file_name = book_description.split('::')[0].strip()
     title = sanitize_filename(file_name)
     return title, image, comments, genres
 
@@ -75,9 +75,9 @@ def get_books(url, first_id, last_id):
         except HTTPError:
             continue
 
-        book_info = get_book_info(url, book_id=id)
-        title = book_info[0]
-        image = book_info[1]
+        book_description = get_book_description(url, book_id=id)
+        title = book_description[0]
+        image = book_description[1]
         save_book(response.text, title, id=id)
         save_image(image)
 

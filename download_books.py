@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup as bs
 from pathlib import Path
 from pathvalidate import sanitize_filename
 from urllib.parse import urlsplit, urljoin
+from requests import HTTPError
 
 
 def create_argparser():
@@ -61,24 +62,24 @@ def save_image(image_url, folder='static/images/'):
 
 
 def check_for_redirect(response):
-    response_history = response.history
-    if response_history:
-        return True
-    return False
-
+    if response.history:
+        raise HTTPError
 
 def get_books(url, first_id, last_id):
     for id in range(first_id, last_id):
         params = {'id': id}
         response = requests.get(url, params=params)
         response.raise_for_status()
-        if check_for_redirect(response):
+        try:
+            check_for_redirect(response)
+        except HTTPError:
             continue
+
         book_info = get_book_info(url, book_id=id)
         title = book_info[0]
         image = book_info[1]
         save_book(response.text, title, id=id)
-        save_image(image, id=id)
+        save_image(image)
 
 
 def main():

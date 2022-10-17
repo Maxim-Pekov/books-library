@@ -68,17 +68,17 @@ def check_for_redirect(response):
 
 
 def get_books(url, first_id, last_id):
-    for _ in range(first_id, last_id):
-        params = {'id': _}
+    for id in range(first_id, last_id):
+        params = {'id': id}
         response = requests.get(url, params=params)
         response.raise_for_status()
         if check_for_redirect(response):
             continue
-        book_info = get_book_info(url, book_id=_)
+        book_info = get_book_info(url, book_id=id)
         title = book_info[0]
         image = book_info[1]
-        save_book(response.text, title, id=_)
-        save_image(image, id=_)
+        save_book(response.text, title, id=id)
+        save_image(image, id=id)
 
 
 def main():

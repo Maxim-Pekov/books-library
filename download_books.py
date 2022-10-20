@@ -15,15 +15,19 @@ def create_argparser():
     parser.add_argument('last_id', help='id последней книги для скачивания', default=10, type=int, nargs='?')
     return parser
 
+def get_response(base_url, book_id):
+    link_book_url = os.path.join(base_url, f'b{book_id}')
+    response = requests.get(link_book_url)
+    response.raise_for_status()
+    return response
+
 
 def get_book_description(url, book_id):
     """Парсит сайт возвращая название книги, обложку, комментарии, жанры по ее id"""
 
     url_parse = urlsplit(url)
     base_url = url_parse._replace(path="").geturl()
-    link_book_url = os.path.join(base_url, f'b{book_id}')
-    response = requests.get(link_book_url)
-    response.raise_for_status()
+    response = get_response(base_url, book_id)
     soup = bs(response.text, 'lxml')
     book_description = soup.body.find('div', id='content').h1.text
     image_url = soup.body.find('div', class_='bookimage').img['src']

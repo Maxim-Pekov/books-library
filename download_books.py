@@ -15,6 +15,7 @@ def create_argparser():
     parser.add_argument('last_id', help='id последней книги для скачивания', default=10, type=int, nargs='?')
     return parser
 
+
 def get_response(base_url, book_id):
     link_book_url = os.path.join(base_url, f'b{book_id}')
     response = requests.get(link_book_url)
@@ -32,12 +33,9 @@ def get_book_description(url, book_id):
     book_description = soup.body.find('div', id='content').h1.text
     image_url = soup.body.find('div', class_='bookimage').img['src']
     soup_genres = soup.body.find('span', class_='d_book').find_all('a')
-    if soup_genres:
-        genres = [genre.text for genre in soup_genres]
+    genres = [genre.text for genre in soup_genres]
     soup_comments = soup.find_all('div', class_='texts')
-    comments = []
-    if soup_comments:
-        comments = [comment.span.text for comment in soup_comments]
+    comments = [comment.span.text for comment in soup_comments]
     image = urljoin(base_url, image_url)
     file_name = book_description.split('::')[0].strip()
     title = sanitize_filename(file_name)

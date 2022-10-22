@@ -1,5 +1,8 @@
+import time
+
 import requests
 import pathlib, os
+import sys
 
 import argparse
 from bs4 import BeautifulSoup as bs
@@ -28,7 +31,11 @@ def get_book_description(url, book_id):
 
     url_parse = urlsplit(url)
     base_url = url_parse._replace(path="").geturl()
-    response = get_response(base_url, book_id)
+    try:
+        response = get_response(base_url, book_id)
+    except ConnectionError:
+        print("Connection Error, connection was interrupted for 30 seconds", file=sys.stderr)
+        time.sleep(30)
     soup = bs(response.text, 'lxml')
     book_description = soup.body.find('div', id='content').h1.text
     image_url = soup.body.find('div', class_='bookimage').img['src']
@@ -67,6 +74,7 @@ def check_for_redirect(response):
     if response.history:
         raise HTTPError
 
+
 def get_books(url, first_id, last_id):
     for id in range(first_id, last_id):
         params = {'id': id}
@@ -77,11 +85,17 @@ def get_books(url, first_id, last_id):
         except HTTPError:
             continue
 
-        book_description = get_book_description(url, book_id=id)
-        title = book_description[0]
-        image = book_description[1]
-        save_book(response.text, title, id=id)
-        save_image(image)
+        try:
+            title, image, *_ = get_book_description(url, book_id=id)
+            save_book(response.text, title, id=id)
+            save_image(image)
+        except HTTPError:
+            print(f"Book id={id} specs not loaded due to server error", file=sys.stderr)
+
+
+
+
+
 
 
 def main():

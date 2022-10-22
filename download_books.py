@@ -22,6 +22,7 @@ def get_response(base_url, book_id):
     link_book_url = os.path.join(base_url, f'b{book_id}')
     response = requests.get(link_book_url, timeout=5)
     response.raise_for_status()
+    print(response.status_code)
     return response
 
 
@@ -88,7 +89,11 @@ def get_books(url, first_id, last_id):
             continue
         except HTTPError:
             print(f"Book id={id} specs not loaded due to server error", file=sys.stderr)
-
+            continue
+        except requests.exceptions.ReadTimeout:
+            print("Connection Error, connection was interrupted for 30 seconds", file=sys.stderr)
+            time.sleep(10)
+            continue
 
 
 

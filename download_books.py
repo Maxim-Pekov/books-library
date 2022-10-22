@@ -84,14 +84,14 @@ def get_books(url, first_id, last_id):
             save_book(response.text, title, id=id)
             save_image(image)
         except requests.exceptions.ConnectionError:
-            print("Connection Error, connection was interrupted for 30 seconds", file=sys.stderr)
+            print("Connection Error, connection was interrupted for 10 seconds", file=sys.stderr)
             time.sleep(10)
             continue
         except HTTPError:
             print(f"Book id={id} specs not loaded due to server error", file=sys.stderr)
             continue
         except requests.exceptions.ReadTimeout:
-            print("Connection Error, connection was interrupted for 30 seconds", file=sys.stderr)
+            print("Connection Error, connection was interrupted for 10 seconds", file=sys.stderr)
             time.sleep(10)
             continue
 

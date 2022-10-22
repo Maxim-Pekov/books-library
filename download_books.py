@@ -1,5 +1,4 @@
 import time
-
 import requests
 import pathlib, os
 import sys
@@ -21,21 +20,16 @@ def create_argparser():
 
 def get_response(base_url, book_id):
     link_book_url = os.path.join(base_url, f'b{book_id}')
-    response = requests.get(link_book_url)
+    response = requests.get(link_book_url, timeout=5)
     response.raise_for_status()
     return response
 
 
 def get_book_description(url, book_id):
     """Парсит сайт возвращая название книги, обложку, комментарии, жанры по ее id"""
-
     url_parse = urlsplit(url)
     base_url = url_parse._replace(path="").geturl()
-    try:
-        response = get_response(base_url, book_id)
-    except ConnectionError:
-        print("Connection Error, connection was interrupted for 30 seconds", file=sys.stderr)
-        time.sleep(30)
+    response = get_response(base_url, book_id)
     soup = bs(response.text, 'lxml')
     book_description = soup.body.find('div', id='content').h1.text
     image_url = soup.body.find('div', class_='bookimage').img['src']
@@ -78,19 +72,25 @@ def check_for_redirect(response):
 def get_books(url, first_id, last_id):
     for id in range(first_id, last_id):
         params = {'id': id}
-        response = requests.get(url, params=params)
-        response.raise_for_status()
         try:
-            check_for_redirect(response)
-        except HTTPError:
-            continue
-
-        try:
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+            try:
+                check_for_redirect(response)
+            except HTTPError:
+                continue
             title, image, *_ = get_book_description(url, book_id=id)
             save_book(response.text, title, id=id)
             save_image(image)
+        except requests.exceptions.ConnectionError:
+            print("Connection Error, connection was interrupted for 30 seconds", file=sys.stderr)
+            time.sleep(10)
+            continue
         except HTTPError:
             print(f"Book id={id} specs not loaded due to server error", file=sys.stderr)
+
+
+
 
 
 

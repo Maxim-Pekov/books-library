@@ -71,8 +71,8 @@ def check_for_redirect(response):
 
 
 def get_books(url, first_id, last_id):
-    for id in range(first_id, last_id):
-        params = {'id': id}
+    for current_id in range(first_id, last_id):
+        params = {'id': current_id}
         try:
             response = requests.get(url, params=params)
             response.raise_for_status()
@@ -80,15 +80,15 @@ def get_books(url, first_id, last_id):
                 check_for_redirect(response)
             except HTTPError:
                 continue
-            title, image, *_ = get_book_description(url, book_id=id)
-            save_book(response.text, title, id=id)
+            title, image, *_ = get_book_description(url, book_id=current_id)
+            save_book(response.text, title, id=current_id)
             save_image(image)
         except requests.exceptions.ConnectionError:
             print("Connection Error, connection was interrupted for 10 seconds", file=sys.stderr)
             time.sleep(10)
             continue
         except HTTPError:
-            print(f"Book id={id} specs not loaded due to server error", file=sys.stderr)
+            print(f"Book id={current_id} specs not loaded due to server error", file=sys.stderr)
             continue
         except requests.exceptions.ReadTimeout:
             print("Connection Error, connection was interrupted for 10 seconds", file=sys.stderr)

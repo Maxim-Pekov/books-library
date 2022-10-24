@@ -76,10 +76,7 @@ def get_books(url, first_id, last_id):
         try:
             response = requests.get(url, params=params)
             response.raise_for_status()
-            try:
-                check_for_redirect(response)
-            except HTTPError:
-                continue
+            check_for_redirect(response)
             title, image, *_ = get_book_description(url, book_id=current_id)
             save_book(response.text, title, id=current_id)
             save_image(image)

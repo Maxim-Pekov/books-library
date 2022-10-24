@@ -18,19 +18,7 @@ def create_argparser():
     return parser
 
 
-def get_response(base_url, book_id):
-    link_book_url = os.path.join(base_url, f'b{book_id}')
-    response = requests.get(link_book_url, timeout=5)
-    response.raise_for_status()
-    print(response.status_code)
-    return response
-
-
-def get_book_description(url, book_id):
-    """Парсит сайт возвращая название книги, обложку, комментарии, жанры по ее id"""
-    url_parse = urlsplit(url)
-    base_url = url_parse._replace(path="").geturl()
-    response = get_response(base_url, book_id)
+def get_book_description(response, base_url):
     soup = bs(response.text, 'lxml')
     book_description = soup.body.find('div', id='content').h1.text
     image_url = soup.body.find('div', class_='bookimage').img['src']
@@ -77,18 +65,23 @@ def get_books(url, first_id, last_id):
             response = requests.get(url, params=params)
             response.raise_for_status()
             check_for_redirect(response)
-            title, image, *_ = get_book_description(url, book_id=current_id)
+            url_parse = urlsplit(url)
+            base_url = url_parse._replace(path="").geturl()
+            link_book_url = os.path.join(base_url, f'b{current_id}')
+            book_link_response = requests.get(link_book_url, timeout=5)
+            book_link_response.raise_for_status()
+            title, image, *_ = get_book_description(book_link_response, base_url)
             save_book(response.text, title, id=current_id)
             save_image(image)
         except requests.exceptions.ConnectionError:
-            print("Connection Error, connection was interrupted for 10 seconds", file=sys.stderr)
+            print("Connection Error, connection was interrupted for 10 seconds.", file=sys.stderr)
             time.sleep(10)
             continue
         except HTTPError:
-            print(f"Book id={current_id} specs not loaded due to server error", file=sys.stderr)
+            print(f"Book id={current_id} specs not loaded due to server error.", file=sys.stderr)
             continue
         except requests.exceptions.ReadTimeout:
-            print("Connection Error, connection was interrupted for 10 seconds", file=sys.stderr)
+            print("Connection Error, connection was interrupted for 10 seconds.", file=sys.stderr)
             time.sleep(10)
             continue
 

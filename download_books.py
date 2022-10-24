@@ -96,13 +96,6 @@ def get_books(url, first_id, last_id):
             continue
 
 
-
-
-
-
-
-
-
 def main():
     parser = create_argparser()
     args = parser.parse_args()

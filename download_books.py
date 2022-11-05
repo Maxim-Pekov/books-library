@@ -20,8 +20,10 @@ def create_argparser():
     return parser
 
 
-def save_book_information_by_json(books):
-    with open("books.json", "w") as my_file:
+def save_book_information_by_json(books, folder):
+    pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
+    directory_path = Path() / folder
+    with open(f"{directory_path}/books.json", "w") as my_file:
         json.dump(books, my_file, ensure_ascii=False)
 
 
@@ -45,22 +47,22 @@ def get_book_description(response, base_url):
     return title, image, comments, genres, author
 
 
-def save_book(book, title, id='', folder='static/books/'):
+def save_book(book, title, folder, id=''):
     """Создает директорию {directory_path} в корне проекта и сохраняет туда переданный файл"""
 
-    pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
-    directory_path = Path() / folder / f'{id}. {title}.txt'
+    pathlib.Path(f'{folder}/books/').mkdir(parents=True, exist_ok=True)
+    directory_path = Path() / f'{folder}/books/' / f'{id}. {title}.txt'
     with open(directory_path, 'w', encoding='utf-8') as file:
         file.write(book)
     return str(directory_path)
 
 
-def save_image(image_url, folder='static/images/'):
+def save_image(image_url, folder):
     response = requests.get(image_url)
     response.raise_for_status()
     image = os.path.basename(image_url)
-    pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
-    directory_path = Path() / folder / image
+    pathlib.Path(f'{folder}/images/').mkdir(parents=True, exist_ok=True)
+    directory_path = Path() / f'{folder}/images/' / image
     with open(directory_path, 'wb') as file:
         file.write(response.content)
     return str(directory_path)
@@ -71,7 +73,7 @@ def check_for_redirect(response):
         raise HTTPError
 
 
-def get_books(url, books_ids):
+def get_books(url, books_ids, folder='static', save_img='yes', save_txt='yes', json_path='static'):
     books = []
     for current_id in books_ids:
         params = {'id': current_id}
@@ -85,8 +87,8 @@ def get_books(url, books_ids):
             book_link_response = requests.get(link_book_url, timeout=5)
             book_link_response.raise_for_status()
             title, image, comments, genres, author = get_book_description(book_link_response, base_url)
-            book_path = save_book(response.text, title, id=current_id)
-            img_src = save_image(image)
+            book_path = save_book(response.text, title, folder, id=current_id) if save_txt == 'yes' else None
+            img_src = save_image(image, folder) if save_img == 'yes' else None
             book = {'title': title,
                     'author': author,
                     'img_src': img_src,
@@ -95,7 +97,7 @@ def get_books(url, books_ids):
                     'book_path': book_path
                     }
             books.append(book)
-            save_book_information_by_json(books)
+            save_book_information_by_json(books, json_path)
         except requests.exceptions.ConnectionError:
             print("Connection Error, connection was interrupted for 10 seconds.", file=sys.stderr)
             time.sleep(10)

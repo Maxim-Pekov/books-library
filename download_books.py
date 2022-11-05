@@ -1,9 +1,11 @@
 import time
+from pprint import pprint
+import argparse
+import json
 import requests
 import pathlib, os
 import sys
 
-import argparse
 from bs4 import BeautifulSoup as bs
 from pathlib import Path
 from pathvalidate import sanitize_filename
@@ -18,6 +20,11 @@ def create_argparser():
     return parser
 
 
+def save_book_information_by_json(books):
+    with open("books.json", "w") as my_file:
+        json.dump(books, my_file, ensure_ascii=False)
+
+
 def get_book_description(response, base_url):
     soup = bs(response.text, 'lxml')
     book_description = soup.body.find('div', id='content').h1.text
@@ -28,8 +35,9 @@ def get_book_description(response, base_url):
     comments = [comment.span.text for comment in soup_comments]
     image = urljoin(base_url, image_url)
     file_name = book_description.split('::')[0].strip()
+    author = book_description.split('::')[1].strip()
     title = sanitize_filename(file_name)
-    return title, image, comments, genres
+    return title, image, comments, genres, author
 
 
 def save_book(book, title, id='', folder='static/books/'):
@@ -39,7 +47,7 @@ def save_book(book, title, id='', folder='static/books/'):
     directory_path = Path() / folder / f'{id}. {title}.txt'
     with open(directory_path, 'w', encoding='utf-8') as file:
         file.write(book)
-    return directory_path
+    return str(directory_path)
 
 
 def save_image(image_url, folder='static/images/'):
@@ -50,7 +58,7 @@ def save_image(image_url, folder='static/images/'):
     directory_path = Path() / folder / image
     with open(directory_path, 'wb') as file:
         file.write(response.content)
-    return directory_path
+    return str(directory_path)
 
 
 def check_for_redirect(response):
@@ -58,8 +66,9 @@ def check_for_redirect(response):
         raise HTTPError
 
 
-def get_books(url, first_id, last_id):
-    for current_id in range(first_id, last_id):
+def get_books(url, books_ids):
+    books = []
+    for current_id in books_ids:
         params = {'id': current_id}
         try:
             response = requests.get(url, params=params)
@@ -70,9 +79,18 @@ def get_books(url, first_id, last_id):
             link_book_url = os.path.join(base_url, f'b{current_id}')
             book_link_response = requests.get(link_book_url, timeout=5)
             book_link_response.raise_for_status()
-            title, image, *_ = get_book_description(book_link_response, base_url)
-            save_book(response.text, title, id=current_id)
-            save_image(image)
+            title, image, comments, genres, author = get_book_description(book_link_response, base_url)
+            book_path = save_book(response.text, title, id=current_id)
+            img_src = save_image(image)
+            book = {'title': title,
+                    'author': author,
+                    'img_src': img_src,
+                    'comments': comments,
+                    'genres': genres,
+                    'book_path': book_path
+                    }
+            books.append(book)
+            save_book_information_by_json(books)
         except requests.exceptions.ConnectionError:
             print("Connection Error, connection was interrupted for 10 seconds.", file=sys.stderr)
             time.sleep(10)
@@ -92,7 +110,8 @@ def main():
     first_id = args.first_id
     last_id = args.last_id + 1
     url = "https://tululu.org/txt.php"
-    get_books(url, first_id, last_id)
+    books_ids = [*range(first_id, last_id)]
+    get_books(url, books_ids)
 
 
 if __name__ == '__main__':

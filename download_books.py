@@ -25,18 +25,38 @@ def save_book_information_by_json(books):
         json.dump(books, my_file, ensure_ascii=False)
 
 
+# def get_book_description(response, base_url):
+#     soup = bs(response.text, 'lxml')
+#     book_description = soup.body.find('div', id='content').h1.text
+#     image_url = soup.body.find('div', class_='bookimage').img['src']
+#     soup_genres = soup.body.find('span', class_='d_book').find_all('a')
+#     genres = [genre.text for genre in soup_genres]
+#     soup_comments = soup.find_all('div', class_='texts')
+#     comments = [comment.span.text for comment in soup_comments]
+#     image = urljoin(base_url, image_url)
+#     file_name = book_description.split('::')[0].strip()
+#     author = book_description.split('::')[1].strip()
+#     title = sanitize_filename(file_name)
+#     return title, image, comments, genres, author
+
+
 def get_book_description(response, base_url):
     soup = bs(response.text, 'lxml')
-    book_description = soup.body.find('div', id='content').h1.text
-    image_url = soup.body.find('div', class_='bookimage').img['src']
-    soup_genres = soup.body.find('span', class_='d_book').find_all('a')
-    genres = [genre.text for genre in soup_genres]
-    soup_comments = soup.find_all('div', class_='texts')
-    comments = [comment.span.text for comment in soup_comments]
+
+    h1_selector = 'div[id="content"] h1'
+    h1 = soup.select_one(h1_selector).text
+    title, author = [sanitize_filename(_.strip()) for _ in h1.split('::')]
+
+    img_selector = '.bookimage img'
+    image_url = soup.select_one(img_selector).get('src')
     image = urljoin(base_url, image_url)
-    file_name = book_description.split('::')[0].strip()
-    author = book_description.split('::')[1].strip()
-    title = sanitize_filename(file_name)
+
+    genres_selector= 'span.d_book a'
+    genres = [genre.text for genre in soup.select(genres_selector)]
+
+    comments_selector = '.texts'
+    comments = [comment.select_one('span').text for comment in soup.select(comments_selector)]
+
     return title, image, comments, genres, author
 
 
@@ -102,6 +122,7 @@ def get_books(url, books_ids):
             print("Connection Error, connection was interrupted for 10 seconds.", file=sys.stderr)
             time.sleep(10)
             continue
+    pprint(books)
 
 
 def main():

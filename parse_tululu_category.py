@@ -1,22 +1,16 @@
-import requests, time
+import requests
 from bs4 import BeautifulSoup as bs
-from urllib.parse import urljoin, urlsplit
-from download_books import get_book_description, save_book, save_image, get_books
+from urllib.parse import urljoin
+from download_books import get_books
 
 
 def get_books_by_category(response):
     soup = bs(response.text, 'lxml')
-    books_by_category = soup.find_all('div', class_='bookimage')
-    books_ids = []
-    for book in books_by_category:
-        current_id = book.a['href'].strip('/b')
-        book_url = urljoin('https://tululu.org/', book.a['href'])
-        print(book_url)
-        #
-        # url_parse = urlsplit(book_url)
-        # current_id = url_parse.path.strip('/b')
-        books_ids.append(int(current_id))
-    return books_ids
+
+    numbers_selector = '.bookimage a'
+    books_by_category = soup.select(numbers_selector)
+    books_numbers = [int(book.get('href').strip('/b')) for book in books_by_category]
+    return books_numbers
 
 
 def main():

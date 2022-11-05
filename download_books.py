@@ -1,5 +1,4 @@
 import time
-from pprint import pprint
 import argparse
 import json
 import requests
@@ -109,7 +108,6 @@ def get_books(url, books_ids, folder='static', save_img='yes', save_txt='yes', j
             print("Connection Error, connection was interrupted for 10 seconds.", file=sys.stderr)
             time.sleep(10)
             continue
-    pprint(books)
 
 
 def main():

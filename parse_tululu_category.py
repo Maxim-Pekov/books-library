@@ -45,6 +45,7 @@ def main():
     parser_options = parser.parse_args(sys.argv[1:])
     url = 'https://tululu.org/l55/'
     response = requests.get(url)
+    response.raise_for_status()
     last_id = get_last_page_id(response)
     if parser_options.last_page:
         pages = range(parser_options.start_page, parser_options.last_page)
@@ -55,6 +56,7 @@ def main():
     for page in pages:
         url_page = urljoin(url, str(page))
         response = requests.get(url_page)
+        response.raise_for_status()
         books_numbers += get_books_id_by_category(response)
     url = "https://tululu.org/txt.php"
     get_books(url, books_numbers, parser_options.dest_folder, parser_options.skip_img, parser_options.skip_txt,

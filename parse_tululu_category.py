@@ -15,10 +15,10 @@ def create_argparser():
                         nargs='?')
     parser.add_argument('-f', '--dest_folder', help='папка назначение для скаченных материалов', default='static',
                         type=str, nargs='?')
-    parser.add_argument('-i', '--save_img', help='выберете no, если не хотите скачивать обложки книг',
-                        choices=['yes', 'no'], default='yes', type=str, nargs='?')
-    parser.add_argument('-t', '--save_txt', help='выберете no, если не хотите скачивать книги', choices=['yes', 'no'],
-                        default='yes', type=str, nargs='?')
+    parser.add_argument('-i', '--skip_img', help='укажите этот параметр без аргументов, чтобы обложки не сохранялись',
+                        action='store_true')
+    parser.add_argument('-t', '--skip_txt', help='укажите этот параметр без аргументов, чтобы книги не сохранялись',
+                        action='store_true')
     parser.add_argument('-j', '--json_path', help='укажите путь к папке для скачивания books.json', default='static',
                         type=str, nargs='?')
     return parser
@@ -60,7 +60,7 @@ def main():
         response = requests.get(url_page)
         books_numbers += get_books_id_by_category(response)
     url = "https://tululu.org/txt.php"
-    get_books(url, books_numbers, parser_options.dest_folder, parser_options.save_img, parser_options.save_txt,
+    get_books(url, books_numbers, parser_options.dest_folder, parser_options.skip_img, parser_options.skip_txt,
               parser_options.json_path)
 
 

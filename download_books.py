@@ -72,7 +72,7 @@ def check_for_redirect(response):
         raise HTTPError
 
 
-def get_books(url, books_ids, folder='static', save_img='yes', save_txt='yes', json_path='static'):
+def get_books(url, books_ids, folder='static', skip_img=True, skip_txt=True, json_path='static'):
     books = []
     for current_id in books_ids:
         params = {'id': current_id}
@@ -86,8 +86,8 @@ def get_books(url, books_ids, folder='static', save_img='yes', save_txt='yes', j
             book_link_response = requests.get(link_book_url, timeout=5)
             book_link_response.raise_for_status()
             title, image, comments, genres, author = get_book_description(book_link_response, base_url)
-            book_path = save_book(response.text, title, folder, id=current_id) if save_txt == 'yes' else None
-            img_src = save_image(image, folder) if save_img == 'yes' else None
+            book_path = save_book(response.text, title, folder, id=current_id) if not skip_txt else None
+            img_src = save_image(image, folder) if not skip_img else None
             book = {'title': title,
                     'author': author,
                     'img_src': img_src,

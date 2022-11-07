@@ -47,16 +47,13 @@ def main():
     response = requests.get(url)
     last_id = get_last_page_id(response)
     if parser_options.last_page:
-        pages = range(int(parser_options.start_page), int(parser_options.last_page))
+        pages = range(parser_options.start_page, parser_options.last_page)
     else:
-        pages = range(int(parser_options.start_page), last_id + 1)
+        pages = range(parser_options.start_page, last_id + 1)
 
     books_numbers = []
     for page in pages:
-        if page == 1:
-            url_page = url
-        else:
-            url_page = urljoin(url, str(page))
+        url_page = urljoin(url, str(page))
         response = requests.get(url_page)
         books_numbers += get_books_id_by_category(response)
     url = "https://tululu.org/txt.php"

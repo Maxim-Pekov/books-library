@@ -4,6 +4,7 @@ import json
 import requests
 import pathlib, os
 import sys
+import logging
 
 from bs4 import BeautifulSoup as bs
 from pathlib import Path
@@ -72,7 +73,7 @@ def check_for_redirect(response):
         raise HTTPError
 
 
-def get_books(url, books_ids, folder='static', skip_img=True, skip_txt=True, json_path='static'):
+def get_books(url, books_ids, folder='static', skip_img=False, skip_txt=False, json_path='static'):
     books = []
     for current_id in books_ids:
         params = {'id': current_id}
@@ -82,9 +83,10 @@ def get_books(url, books_ids, folder='static', skip_img=True, skip_txt=True, jso
             check_for_redirect(response)
             url_parse = urlsplit(url)
             base_url = url_parse._replace(path="").geturl()
-            link_book_url = os.path.join(base_url, f'b{current_id}')
+            link_book_url = os.path.join(base_url, f'b{current_id}', '')
             book_link_response = requests.get(link_book_url, timeout=5)
             book_link_response.raise_for_status()
+            check_for_redirect(book_link_response)
             title, image, comments, genres, author = get_book_description(book_link_response, base_url)
             book_path = save_book(response.text, title, folder, id=current_id) if not skip_txt else None
             img_src = save_image(image, folder) if not skip_img else None
@@ -98,14 +100,18 @@ def get_books(url, books_ids, folder='static', skip_img=True, skip_txt=True, jso
             books.append(book)
             save_book_information_by_json(books, json_path)
         except requests.exceptions.ConnectionError:
-            print("Connection Error, connection was interrupted for 10 seconds.", file=sys.stderr)
+            logging.warning('Connection Error, connection was interrupted for 10 seconds.')
+            # print("Connection Error, connection was interrupted for 10 seconds.", file=sys.stderr)
             time.sleep(10)
             continue
         except HTTPError:
-            print(f"Book id={current_id} specs not loaded due to server error.", file=sys.stderr)
+            logging.warning(f"Book id={current_id} specs not loaded due to server error.")
+            # print(f"Book id={current_id} specs not loaded due to server error.", file=sys.stderr)
+            print()
             continue
         except requests.exceptions.ReadTimeout:
-            print("Connection Error, connection was interrupted for 10 seconds.", file=sys.stderr)
+            logging.warning("Connection Error, connection was interrupted for 10 seconds.")
+            # print("Connection Error, connection was interrupted for 10 seconds.", file=sys.stderr)
             time.sleep(10)
             continue
 

@@ -51,10 +51,10 @@ def save_book(book, title, folder, id=''):
     """Создает директорию {directory_path} в корне проекта и сохраняет туда переданный файл"""
 
     pathlib.Path(f'{folder}/books/').mkdir(parents=True, exist_ok=True)
-    directory_path = Path() / f'{folder}/books/' / f'{id}. {title}.txt'
-    with open(directory_path, 'w', encoding='utf-8') as file:
+    file_path = Path() / f'{folder}/books/' / f'{id}. {title}.txt'
+    with open(file_path, 'w', encoding='utf-8') as file:
         file.write(book)
-    return str(directory_path)
+    return str(file_path)
 
 
 def save_image(image_url, folder):
@@ -62,10 +62,10 @@ def save_image(image_url, folder):
     response.raise_for_status()
     image = os.path.basename(image_url)
     pathlib.Path(f'{folder}/images/').mkdir(parents=True, exist_ok=True)
-    directory_path = Path() / f'{folder}/images/' / image
-    with open(directory_path, 'wb') as file:
+    file_path = Path() / f'{folder}/images/' / image
+    with open(file_path, 'wb') as file:
         file.write(response.content)
-    return str(directory_path)
+    return str(file_path)
 
 
 def check_for_redirect(response):
@@ -107,7 +107,6 @@ def get_books(url, books_ids, folder='static', skip_img=False, skip_txt=False, j
         except HTTPError:
             logging.warning(f"Book id={current_id} specs not loaded due to server error.")
             # print(f"Book id={current_id} specs not loaded due to server error.", file=sys.stderr)
-            print()
             continue
         except requests.exceptions.ReadTimeout:
             logging.warning("Connection Error, connection was interrupted for 10 seconds.")

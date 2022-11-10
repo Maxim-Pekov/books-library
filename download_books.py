@@ -22,8 +22,8 @@ def create_argparser():
 
 def save_book_information_by_json(books, folder):
     pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
-    directory_path = Path() / folder
-    with open(f"{directory_path}/books.json", "w") as my_file:
+    file_path = Path() / folder / 'books.json'
+    with open(file_path, "w") as my_file:
         json.dump(books, my_file, ensure_ascii=False)
 
 
@@ -50,8 +50,9 @@ def get_book_description(response, base_url):
 def save_book(book, title, folder, id=''):
     """Создает директорию {directory_path} в корне проекта и сохраняет туда переданный файл"""
 
-    pathlib.Path(f'{folder}/books/').mkdir(parents=True, exist_ok=True)
-    file_path = Path() / f'{folder}/books/' / f'{id}. {title}.txt'
+    directory_path = Path() / folder / 'books'
+    pathlib.Path(directory_path).mkdir(parents=True, exist_ok=True)
+    file_path = Path() / directory_path / f'{id}. {title}.txt'
     with open(file_path, 'w', encoding='utf-8') as file:
         file.write(book)
     return str(file_path)
@@ -61,8 +62,9 @@ def save_image(image_url, folder):
     response = requests.get(image_url)
     response.raise_for_status()
     image = os.path.basename(image_url)
-    pathlib.Path(f'{folder}/images/').mkdir(parents=True, exist_ok=True)
-    file_path = Path() / f'{folder}/images/' / image
+    directory_path = Path() / folder / 'images'
+    pathlib.Path(directory_path).mkdir(parents=True, exist_ok=True)
+    file_path = Path() / directory_path / image
     with open(file_path, 'wb') as file:
         file.write(response.content)
     return str(file_path)
@@ -101,16 +103,13 @@ def get_books(url, books_ids, folder='static', skip_img=False, skip_txt=False, j
             save_book_information_by_json(books, json_path)
         except requests.exceptions.ConnectionError:
             logging.warning('Connection Error, connection was interrupted for 10 seconds.')
-            # print("Connection Error, connection was interrupted for 10 seconds.", file=sys.stderr)
             time.sleep(10)
             continue
         except HTTPError:
             logging.warning(f"Book id={current_id} specs not loaded due to server error.")
-            # print(f"Book id={current_id} specs not loaded due to server error.", file=sys.stderr)
             continue
         except requests.exceptions.ReadTimeout:
             logging.warning("Connection Error, connection was interrupted for 10 seconds.")
-            # print("Connection Error, connection was interrupted for 10 seconds.", file=sys.stderr)
             time.sleep(10)
             continue
 

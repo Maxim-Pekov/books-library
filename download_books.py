@@ -23,8 +23,8 @@ def create_argparser():
 def save_book_information_by_json(books, folder):
     pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
     file_path = Path() / folder / 'books.json'
-    with open(file_path, "w") as my_file:
-        json.dump(books, my_file, ensure_ascii=False)
+    with open(file_path, "w") as file:
+        json.dump(books, file, ensure_ascii=False)
 
 
 def get_book_description(response, base_url):

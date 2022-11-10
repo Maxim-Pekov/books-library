@@ -20,11 +20,16 @@ def create_argparser():
     return parser
 
 
-def save_book_information_by_json(books, folder):
-    pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
-    file_path = Path() / folder / 'books.json'
+def save_book_information_by_json(books, folder, file_name='books.json'):
+    file_path = create_file(folder, file_name)
     with open(file_path, "w") as file:
         json.dump(books, file, ensure_ascii=False)
+
+
+def create_file(folder, file_name):
+    pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
+    file_path = Path() / folder / file_name
+    return file_path
 
 
 def get_book_description(response, base_url):
@@ -51,8 +56,7 @@ def save_book(book, title, folder, id=''):
     """Создает директорию {directory_path} в корне проекта и сохраняет туда переданный файл"""
 
     directory_path = Path() / folder / 'books'
-    pathlib.Path(directory_path).mkdir(parents=True, exist_ok=True)
-    file_path = Path() / directory_path / f'{id}. {title}.txt'
+    file_path = create_file(directory_path, f'{id}. {title}.txt')
     with open(file_path, 'w', encoding='utf-8') as file:
         file.write(book)
     return str(file_path)
@@ -63,8 +67,7 @@ def save_image(image_url, folder):
     response.raise_for_status()
     image = os.path.basename(image_url)
     directory_path = Path() / folder / 'images'
-    pathlib.Path(directory_path).mkdir(parents=True, exist_ok=True)
-    file_path = Path() / directory_path / image
+    file_path = create_file(directory_path, image)
     with open(file_path, 'wb') as file:
         file.write(response.content)
     return str(file_path)
@@ -100,7 +103,7 @@ def get_books(url, books_ids, folder='static', skip_img=False, skip_txt=False, j
                     'book_path': book_path
                     }
             books.append(book)
-            save_book_information_by_json(books, json_path)
+            save_book_information_by_json(books, folder)
         except requests.exceptions.ConnectionError:
             logging.warning('Connection Error, connection was interrupted for 10 seconds.')
             time.sleep(10)

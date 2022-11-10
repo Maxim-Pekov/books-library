@@ -3,7 +3,6 @@ import argparse
 import json
 import requests
 import pathlib, os
-import sys
 import logging
 
 from bs4 import BeautifulSoup as bs

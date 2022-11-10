@@ -1,10 +1,12 @@
 import sys
 import requests
 import argparse
+import logging, time
 
 from bs4 import BeautifulSoup as bs
 from urllib.parse import urljoin
 from download_books import get_books, check_for_redirect
+from requests import HTTPError
 
 
 def create_argparser():
@@ -44,7 +46,22 @@ def main():
     parser = create_argparser()
     parser_options = parser.parse_args(sys.argv[1:])
     url = 'https://tululu.org/l55/'
-    response = requests.get(url)
+    while True:
+        try:
+            response = requests.get(url)
+            break
+        except requests.exceptions.ConnectionError:
+            logging.warning('Connection Error, connection was interrupted for 10 seconds.')
+            time.sleep(10)
+            continue
+        except requests.exceptions.ReadTimeout:
+            logging.warning("Connection Error, connection was interrupted for 10 seconds.")
+            time.sleep(10)
+            continue
+        except HTTPError:
+            logging.warning("HTTPError Connection Error, connection was interrupted for 10 seconds.")
+            time.sleep(10)
+            continue
     response.raise_for_status()
     check_for_redirect(response)
     last_id = get_last_page_id(response)

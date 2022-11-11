@@ -49,6 +49,8 @@ def main():
     while True:
         try:
             response = requests.get(url)
+            response.raise_for_status()
+            check_for_redirect(response)
             break
         except requests.exceptions.ConnectionError:
             logging.warning('Connection Error, connection was interrupted for 10 seconds.')
@@ -62,14 +64,10 @@ def main():
             logging.warning("HTTPError Connection Error, connection was interrupted for 10 seconds.")
             time.sleep(10)
             continue
-    response.raise_for_status()
-    check_for_redirect(response)
     last_id = get_last_page_id(response)
+    pages = range(parser_options.start_page, last_id + 1)
     if parser_options.last_page:
         pages = range(parser_options.start_page, parser_options.last_page)
-    else:
-        pages = range(parser_options.start_page, last_id + 1)
-
     books_numbers = []
     for page in pages:
         url_page = urljoin(url, str(page))

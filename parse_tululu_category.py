@@ -57,7 +57,7 @@ def main():
             time.sleep(10)
             continue
         except requests.exceptions.ReadTimeout:
-            logging.warning("Connection Error, connection was interrupted for 10 seconds.")
+            logging.warning("ReadTimeout Error, connection was interrupted for 10 seconds.")
             time.sleep(10)
             continue
         except HTTPError:
@@ -71,9 +71,22 @@ def main():
     books_numbers = []
     for page in pages:
         url_page = urljoin(url, str(page))
-        response = requests.get(url_page)
-        response.raise_for_status()
-        check_for_redirect(response)
+        try:
+            response = requests.get(url_page)
+            response.raise_for_status()
+            check_for_redirect(response)
+        except requests.exceptions.ConnectionError:
+            logging.warning('Connection Error, connection was interrupted for 10 seconds.')
+            time.sleep(10)
+            continue
+        except requests.exceptions.ReadTimeout:
+            logging.warning("ReadTimeout Error, connection was interrupted for 10 seconds.")
+            time.sleep(10)
+            continue
+        except HTTPError:
+            logging.warning("HTTPError Connection Error, connection was interrupted for 10 seconds.")
+            time.sleep(10)
+            continue
         books_numbers += get_books_id_by_category(response)
     url = "https://tululu.org/txt.php"
     get_books(url, books_numbers, parser_options.dest_folder, parser_options.skip_img, parser_options.skip_txt,

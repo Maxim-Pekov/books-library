@@ -102,7 +102,6 @@ def get_books(url, books_ids, folder='static', skip_img=False, skip_txt=False, j
                     'book_path': book_path
                     }
             books.append(book)
-            save_book_information_by_json(books, folder)
         except requests.exceptions.ConnectionError:
             logging.warning('Connection Error, connection was interrupted for 10 seconds.')
             time.sleep(10)
@@ -114,6 +113,7 @@ def get_books(url, books_ids, folder='static', skip_img=False, skip_txt=False, j
             logging.warning("Connection Error, connection was interrupted for 10 seconds.")
             time.sleep(10)
             continue
+    save_book_information_by_json(books, folder)
 
 
 def main():

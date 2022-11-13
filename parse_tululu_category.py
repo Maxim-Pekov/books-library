@@ -46,24 +46,9 @@ def main():
     parser = create_argparser()
     parser_options = parser.parse_args(sys.argv[1:])
     url = 'https://tululu.org/l55/'
-    while True:
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            check_for_redirect(response)
-            break
-        except requests.exceptions.ConnectionError:
-            logging.warning('Connection Error, connection was interrupted for 10 seconds.')
-            time.sleep(10)
-            continue
-        except requests.exceptions.ReadTimeout:
-            logging.warning("ReadTimeout Error, connection was interrupted for 10 seconds.")
-            time.sleep(10)
-            continue
-        except HTTPError:
-            logging.warning("HTTPError Connection Error, connection was interrupted for 10 seconds.")
-            time.sleep(10)
-            continue
+    response = requests.get(url)
+    response.raise_for_status()
+    check_for_redirect(response)
     last_id = get_last_page_id(response)
     pages = range(parser_options.start_page, last_id + 1)
     if parser_options.last_page:

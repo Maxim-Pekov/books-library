@@ -12,22 +12,22 @@
     <title>Hello, world!</title>
 </head>
 
-<body>
+<body class="pagination justify-content-center">
 <div class="card mb-3" style="max-width: 1000px;">
     <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
+        <ul class="pagination justify-content-center mt-4 mb-4 pt-2">
             {% if current_page == 0 %}
                 <li class="page-item disabled">
-                    <a class="page-link" href="index{{current_page-1}}.html" tabindex="-1" aria-disabled="true"
+                    <a class="page-link" href="index{{current_page-1}}.html" tabindex="-1"
                        aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
+                        <span aria-hidden="true">Назад</span>
                     </a>
                 </li>
             {% else %}
                 <li class="page-item">
                     <a class="page-link" href="index{{current_page-1}}.html" tabindex="-1" aria-disabled="true"
                        aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
+                        <span aria-hidden="true">Назад</span>
                     </a>
                 </li>
             {% endif %}
@@ -43,13 +43,13 @@
             {% if count_pages|length-1 == current_page %}
                 <li class="page-item disabled">
                     <a class="page-link" href="index{{current_page+1}}.html" tabindex="-1" aria-disabled="true" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
+                        <span aria-hidden="true">Вперед</span>
                     </a>
                 </li>
             {% else %}
                 <li class="page-item">
                     <a class="page-link" href="index{{current_page+1}}.html" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
+                        <span aria-hidden="true">Вперед</span>
                     </a>
                 </li>
             {% endif %}
@@ -92,20 +92,44 @@
         {% endfor %}
     </div>
     <nav aria-label="Page navigation example">
-        <ul class="pagination">
-            <li class="page-item">
-                <a class="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-                <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
+        <ul class="pagination justify-content-center mt-2 mb-4 pt-2">
+            {% if current_page == 0 %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="index{{current_page-1}}.html" tabindex="-1"
+                       aria-label="Previous">
+                        <span aria-hidden="true">Назад</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="index{{current_page-1}}.html" tabindex="-1" aria-disabled="true"
+                       aria-label="Previous">
+                        <span aria-hidden="true">Назад</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for page in count_pages %}
+                {% if page == current_page %}
+                    <li class="page-item active"><a class="page-link" href="index{{page}}.html">{{page}}</a></li>
+                {% else %}
+                    <li class="page-item "><a class="page-link" href="index{{page}}.html">{{page}}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if count_pages|length-1 == current_page %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="index{{current_page+1}}.html" tabindex="-1" aria-disabled="true" aria-label="Next">
+                        <span aria-hidden="true">Вперед</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="index{{current_page+1}}.html" aria-label="Next">
+                        <span aria-hidden="true">Вперед</span>
+                    </a>
+                </li>
+            {% endif %}
         </ul>
     </nav>
 </div>

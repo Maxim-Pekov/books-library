@@ -5,3 +5,4 @@ pathvalidate==2.5.2
 argparse==1.4.0
 Jinja==23.1.2
 livereload==2.6.3
+more_itertools==9.0.0

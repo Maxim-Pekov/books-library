@@ -25,6 +25,7 @@ def follow_template_changes():
     for count, chunk in enumerate(all_chunks):
         render_page = template.render(
             books=chunk,
+            page=f'pages/{count}index.html',
         )
         with open(f'pages/{count}index.html', 'w', encoding='utf-8') as file:
             file.write(render_page)

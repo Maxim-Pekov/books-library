@@ -42,7 +42,7 @@ def get_book_description(response, base_url):
     image_url = soup.select_one(img_selector).get('src')
     image = urljoin(base_url, image_url)
 
-    genres_selector= 'span.d_book a'
+    genres_selector = 'span.d_book a'
     genres = [genre.text for genre in soup.select(genres_selector)]
 
     comments_selector = '.texts'

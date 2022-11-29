@@ -16,15 +16,17 @@
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             <li class="page-item">
-                <a class="page-link" href="#" aria-label="Previous">
+                <a class="page-link" href="index{{page-1}}.html" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
-            <li class="page-item"><a class="page-link" href="{{page}}">1</a></li>
-            <li class="page-item"><a class="page-link" href="{{#}}">2</a></li>
-            <li class="page-item"><a class="page-link" href="{{}}">3</a></li>
+<!--            <li class="page-item"><a class="page-link" href="./pages/{{page-1}}index.html">{{page-1}}</a></li>-->
+            {% for i in count_pages %}
+            <li class="page-item"><a class="page-link" href="index{{i}}.html">{{i}}</a></li>
+            {% endfor %}
+<!--            <li class="page-item"><a class="page-link" href="pages/{{page+1}}index.html">{{page+1}}</a></li>-->
             <li class="page-item">
-                <a class="page-link" href="#" aria-label="Next">
+                <a class="page-link" href="index{{page+1}}.html" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
@@ -36,13 +38,13 @@
             <div class="col mb-2">
                 <div class="row">
                     <div class="col-md-4">
-                        <img src="{{book[0].img_src|urlencode}}" class="card-img" alt="{{book[0].title}}">
+                        <img src="../{{book[0].img_src|urlencode}}" class="card-img" alt="{{book[0].title}}">
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
                             <h5 class="card-title">{{book[0].title}}</h5>
                             <p class="card-text">{{book[0].author}}</p>
-                            <a href="{{book[0].book_path|urlencode}}" target="_blank" rel="noopener noreferrer">Ссылка
+                            <a href="../{{book[0].book_path|urlencode}}" target="_blank" rel="noopener noreferrer">Ссылка
                                 на книгу</a>
                         </div>
                     </div>
@@ -51,7 +53,7 @@
             <div class="col">
                 <div class="row">
                     <div class="col-md-4">
-                        <img src="{{book[1].img_src|urlencode}}" class="card-img" alt="{{book[1].title}}">
+                        <img src="../{{book[1].img_src|urlencode}}" class="card-img" alt="{{book[1].title}}">
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">

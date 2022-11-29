@@ -1,5 +1,7 @@
 import json
+import math
 import pathlib
+from pathlib import Path
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pprint import pprint
 from itertools import count
@@ -11,7 +13,7 @@ env = Environment(
     loader=FileSystemLoader('.'),
     autoescape=select_autoescape(['html', 'xml'])
 )
-
+directory_path = Path() / "static" / ''
 
 def follow_template_changes():
     template = env.get_template('base_template.html')
@@ -20,14 +22,17 @@ def follow_template_changes():
     books = list(chunked(books, 2))
     pprint(books)
     all_chunks = ichunked(books, 10)
-    pprint(all_chunks)
+    pprint(len(books))
     pathlib.Path('pages').mkdir(parents=True, exist_ok=True)
+    count_pages = range(math.ceil(len(books)/10))
+    print(count_pages)
     for count, chunk in enumerate(all_chunks):
         render_page = template.render(
             books=chunk,
-            page=f'pages/{count}index.html',
+            page=count,
+            count_pages=count_pages,
         )
-        with open(f'pages/{count}index.html', 'w', encoding='utf-8') as file:
+        with open(f'pages/index{count}.html', 'w', encoding='utf-8') as file:
             file.write(render_page)
 
 
@@ -38,4 +43,4 @@ follow_template_changes()
 
 server = Server()
 server.watch('base_template.html', follow_template_changes)
-server.serve(root='./pages/0index.html')
+server.serve(root='pages/index0.html')

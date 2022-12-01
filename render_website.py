@@ -13,17 +13,17 @@ env = Environment(
     loader=FileSystemLoader('.'),
     autoescape=select_autoescape(['html', 'xml'])
 )
-directory_path = Path() / "static" / ''
+directory_path = Path() / "media" / ''
 
 def follow_template_changes():
     template = env.get_template('base_template.html')
-    with open('./static/books.json', 'r', encoding='utf-8') as fh:
+    with open('media/books.json', 'r', encoding='utf-8') as fh:
         books = json.load(fh)
     books = list(chunked(books, 2))
     pprint(books)
     all_chunks = ichunked(books, 10)
     pprint(len(books))
-    pathlib.Path('docs').mkdir(parents=True, exist_ok=True)
+    pathlib.Path('pages').mkdir(parents=True, exist_ok=True)
     count_pages = range(math.ceil(len(books)/10))
     print(count_pages)
     for count, chunk in enumerate(all_chunks):
@@ -32,7 +32,7 @@ def follow_template_changes():
             current_page=count,
             count_pages=count_pages,
         )
-        with open(f'docs/index{count}.html', 'w', encoding='utf-8') as file:
+        with open(f'pages/index{count}.html', 'w', encoding='utf-8') as file:
             file.write(render_page)
 
 
@@ -43,4 +43,4 @@ follow_template_changes()
 
 server = Server()
 server.watch('base_template.html', follow_template_changes)
-server.serve(root='docs/index.html')
+server.serve(root='pages/index0.html')

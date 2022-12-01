@@ -1,6 +1,6 @@
 .idea
 .idea/
-*.txt
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -73,7 +73,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+pages/_build/
 
 # PyBuilder
 target/

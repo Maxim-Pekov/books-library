@@ -2,11 +2,8 @@ import json
 import math
 import pathlib
 from pathlib import Path
-from http.server import HTTPServer, SimpleHTTPRequestHandler
-from pprint import pprint
-from itertools import count
 from more_itertools import chunked, ichunked
-from livereload import Server, shell
+from livereload import Server
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 env = Environment(
@@ -20,26 +17,20 @@ def follow_template_changes():
     with open('media/books.json', 'r', encoding='utf-8') as fh:
         books = json.load(fh)
     books = list(chunked(books, 2))
-    pprint(books)
     all_chunks = ichunked(books, 10)
-    pprint(len(books))
     pathlib.Path('pages').mkdir(parents=True, exist_ok=True)
-    count_pages = range(math.ceil(len(books)/10))
-    print(count_pages)
+    count_pages = range(1, math.ceil(len(books)/10) + 1)
     for count, chunk in enumerate(all_chunks):
         render_page = template.render(
             books=chunk,
-            current_page=count,
+            current_page=count + 1,
             count_pages=count_pages,
         )
-        with open(f'pages/index{count}.html', 'w', encoding='utf-8') as file:
+        with open(f'pages/index{count + 1}.html', 'w', encoding='utf-8') as file:
             file.write(render_page)
 
 
 follow_template_changes()
-# follow_template_changes()
-# server = HTTPServer(('127.0.0.1', 8000), SimpleHTTPRequestHandler)
-# server.serve_forever()
 
 server = Server()
 server.watch('base_template.html', follow_template_changes)

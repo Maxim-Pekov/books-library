@@ -77,7 +77,7 @@ def check_for_redirect(response):
         raise HTTPError
 
 
-def get_books(url, books_ids, folder='static', skip_img=False, skip_txt=False, json_path='static'):
+def get_books(url, books_ids, folder='media', skip_img=False, skip_txt=False, json_path='static'):
     books = []
     for current_id in books_ids:
         params = {'id': current_id}

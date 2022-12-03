@@ -1,0 +1,24 @@
+{
+  "name": "Books-library!",
+  "short_name": "Books",
+  "icons": [
+  {
+    "src": "./../static/favicons/apple-touch-icon-57x57",
+    "sizes": "57x57",
+    "type": "image/png"
+  },
+  {
+    "src": "./../static/favicons/apple-touch-icon-120x120.png",
+    "sizes": "120x120",
+    "type": "image/png"
+ },
+  {
+    "src": "./../static/favicons/apple-touch-icon-180x180.png",
+    "sizes": "180x180",
+    "type": "image/png"
+ }
+],
+  "theme_color": "#da532c",
+  "background_color": "#da532c",
+  "display": "standalone"
+}

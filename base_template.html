@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="msapplication-TileImage" content="./../static/favicons/favicon.png">
+    <meta name="application-name" content="Books-library!">
+    <link rel="manifest" href="./../static/favicons/manifest.json">
+    <link rel="mask-icon" href="./../static/favicons/safari-pinned-tab.svg" color="#da532c">
+    <link rel="icon" href="./../static/favicons/favicon.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="./../static/favicons/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./../static/favicons/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./../static/favicons/apple-touch-icon-180x180.png">
+    <link rel="icon" sizes="16x16" href="./../static/favicons/favicon16x16.ico">
+    <link rel="icon" sizes="32x32" href="./../static/favicons/favicon32x32.ico">
+    <link rel="icon" sizes="48x48" href="./../static/favicons/favicon48x48.ico">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="./../static/css/bootstrap.min.css">
+
+    <title>Books-library!</title>
+</head>
+
+<body class="pagination justify-content-center">
+<div class="card mb-3 " style="max-width: 1000px;">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center mt-4 mb-4 pt-2 ">
+            {% if current_page == 1 %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="index{{current_page-1}}.html" tabindex="-1"
+                       aria-label="Previous">
+                        <span aria-hidden="true">Назад</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="index{{current_page-1}}.html" tabindex="-1" aria-disabled="true"
+                       aria-label="Previous">
+                        <span aria-hidden="true">Назад</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for page in count_pages %}
+                {% if page == current_page %}
+                    <li class="page-item active"><a class="page-link" href="index{{page}}.html">{{page}}</a></li>
+                {% else %}
+                    <li class="page-item "><a class="page-link" href="index{{page}}.html">{{page}}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if count_pages|length == current_page %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="index{{current_page+1}}.html" tabindex="-1" aria-disabled="true" aria-label="Next">
+                        <span aria-hidden="true">Вперед</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="index{{current_page+1}}.html" aria-label="Next">
+                        <span aria-hidden="true">Вперед</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    <div class="container">
+        {% for book in books %}
+        <div class="row mb-2">
+            <div class="col mb-2">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img src="./../{{book[0].img_src|urlencode}}" class="card-img" alt="{{book[0].title}}">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{book[0].title}}</h5>
+                            <p class="card-text">{{book[0].author}}</p>
+                            {% for genre in book[0].genres %}
+                                <span class="badge badge-dark">{{genre}}</span>
+                            {% endfor %}
+                            <hr/>
+                            <a href="./../{{book[0].book_path|urlencode}}" target="_blank" rel="noopener noreferrer">Ссылка
+                                на книгу</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    {% if book[1] %}
+                    <div class="col-md-4">
+                        <img src="./../{{book[1].img_src|urlencode}}" class="card-img" alt="{{book[1].title}}">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{book[1].title}}</h5>
+                            <p class="card-text">{{book[1].author}}</p>
+                            {% for genre in book[1].genres %}
+                                <span class="badge badge-dark">{{genre}}</span>
+                            {% endfor %}
+                            <hr>
+                            <a href="{{book[0].book_path|urlencode}}" target="_blank" rel="noopener noreferrer">Ссылка
+                                на книгу</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center mt-2 mb-4 pt-2">
+            {% if current_page == 1 %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="index{{current_page-1}}.html" tabindex="-1"
+                       aria-label="Previous">
+                        <span aria-hidden="true">Назад</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="index{{current_page-1}}.html" tabindex="-1" aria-disabled="true"
+                       aria-label="Previous">
+                        <span aria-hidden="true">Назад</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for page in count_pages %}
+                {% if page == current_page %}
+                    <li class="page-item active"><a class="page-link" href="index{{page}}.html">{{page}}</a></li>
+                {% else %}
+                    <li class="page-item "><a class="page-link" href="index{{page}}.html">{{page}}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if count_pages|length == current_page %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="index{{current_page+1}}.html" tabindex="-1" aria-disabled="true" aria-label="Next">
+                        <span aria-hidden="true">Вперед</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="index{{current_page+1}}.html" aria-label="Next">
+                        <span aria-hidden="true">Вперед</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+
+
+<!-- Optional JavaScript; choose one of the two! -->
+
+<!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+<script src="./../static/js/jquery-3.5.1.slim.min.js"></script>
+<script src="./../static/js/bootstrap.bundle.min.js"></script>
+
+<!-- Option 2: jQuery, Popper.js, and Bootstrap JS
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+-->
+</body>
+</html>

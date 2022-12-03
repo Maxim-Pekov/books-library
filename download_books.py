@@ -42,7 +42,7 @@ def get_book_description(response, base_url):
     image_url = soup.select_one(img_selector).get('src')
     image = urljoin(base_url, image_url)
 
-    genres_selector= 'span.d_book a'
+    genres_selector = 'span.d_book a'
     genres = [genre.text for genre in soup.select(genres_selector)]
 
     comments_selector = '.texts'
@@ -77,7 +77,7 @@ def check_for_redirect(response):
         raise HTTPError
 
 
-def get_books(url, books_ids, folder='static', skip_img=False, skip_txt=False, json_path='static'):
+def get_books(url, books_ids, folder='media', skip_img=False, skip_txt=False, json_path='static'):
     books = []
     for current_id in books_ids:
         params = {'id': current_id}

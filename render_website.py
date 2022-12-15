@@ -6,7 +6,7 @@ from more_itertools import chunked, ichunked
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
-BOOKS_JSON = Path() / "media" / 'books.json'
+BOOKS_JSON_PATH = Path() / "media" / 'books.json'
 NUMBER_OF_COLUMN = 2
 BOOK_PER_PAGES = 10
 PAGES_DIR = 'pages'
@@ -42,7 +42,7 @@ def render_html_pages(splited_books, books_count):
 
 
 def main():
-    with open(BOOKS_JSON, 'r', encoding='utf-8') as fh:
+    with open(BOOKS_JSON_PATH, 'r', encoding='utf-8') as fh:
         books = json.load(fh)
     splited_books = split_by_columns_and_pages(books)
     pathlib.Path(PAGES_DIR).mkdir(parents=True, exist_ok=True)

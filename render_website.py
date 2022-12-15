@@ -8,12 +8,12 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 BOOKS_JSON_PATH = Path() / "media" / 'books.json'
 NUMBER_OF_COLUMN = 2
-BOOK_PER_PAGES = 10
+BOOKS_COUNT_PER_PAGE = 10
 PAGES_DIR = 'pages'
 TEMPLATE_HTML = 'base_template.html'
 
 
-def split_by_columns_and_pages(elements, column=NUMBER_OF_COLUMN, pages=BOOK_PER_PAGES):
+def split_by_columns_and_pages(elements, column=NUMBER_OF_COLUMN, pages=BOOKS_COUNT_PER_PAGE):
     splited_by_column = list(chunked(elements, column))
     splited_by_page = ichunked(splited_by_column, pages)
     return splited_by_page
@@ -29,7 +29,7 @@ def get_template_html(template_html):
 
 def render_html_pages(splited_books, books_count):
     template = get_template_html(TEMPLATE_HTML)
-    count_pages = range(1, math.ceil(books_count / (BOOK_PER_PAGES * 2)) + 1)
+    count_pages = range(1, math.ceil(books_count / (BOOKS_COUNT_PER_PAGE * 2)) + 1)
     for count, chunk in enumerate(splited_books):
         render_page = template.render(
             books=chunk,

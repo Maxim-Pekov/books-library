@@ -13,12 +13,6 @@ PAGES_DIR = 'pages'
 TEMPLATE_HTML = 'base_template.html'
 
 
-def get_books_by_json():
-    with open(BOOKS_JSON, 'r', encoding='utf-8') as fh:
-        books = json.load(fh)
-    return books
-
-
 def split_by_columns_and_pages(elements, column=NUMBER_OF_COLUMN, pages=BOOK_PER_PAGES):
     splited_by_column = list(chunked(elements, column))
     splited_by_page = ichunked(splited_by_column, pages)
@@ -48,7 +42,8 @@ def render_html_pages(splited_books, books_count):
 
 
 def main():
-    books = get_books_by_json()
+    with open(BOOKS_JSON, 'r', encoding='utf-8') as fh:
+        books = json.load(fh)
     splited_books = split_by_columns_and_pages(books)
     pathlib.Path(PAGES_DIR).mkdir(parents=True, exist_ok=True)
     render_html_pages(splited_books, len(books))

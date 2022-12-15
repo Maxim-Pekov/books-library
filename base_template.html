@@ -41,7 +41,7 @@
             </li>
             {% endif %}
 
-            {% for page in count_pages %}
+            {% for page in pages_count %}
             {% if page == current_page %}
             <li class="page-item active"><a class="page-link" href="index{{page}}.html">{{page}}</a></li>
             {% else %}
@@ -49,7 +49,7 @@
             {% endif %}
             {% endfor %}
 
-            {% if count_pages|length == current_page %}
+            {% if pages_count|length == current_page %}
             <li class="page-item disabled">
                 <a class="page-link" href="index{{current_page+1}}.html" tabindex="-1" aria-disabled="true"
                    aria-label="Next">
@@ -136,7 +136,7 @@
             </li>
             {% endif %}
 
-            {% for page in count_pages %}
+            {% for page in pages_count %}
             {% if page == current_page %}
             <li class="page-item active"><a class="page-link" href="index{{page}}.html">{{page}}</a></li>
             {% else %}
@@ -144,7 +144,7 @@
             {% endif %}
             {% endfor %}
 
-            {% if count_pages|length == current_page %}
+            {% if pages_count|length == current_page %}
             <li class="page-item disabled">
                 <a class="page-link" href="index{{current_page+1}}.html" tabindex="-1" aria-disabled="true"
                    aria-label="Next">

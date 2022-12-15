@@ -29,16 +29,16 @@ def get_template_html(template_html):
 
 def render_html_pages(splited_books, books_count):
     template = get_template_html(TEMPLATE_HTML)
-    count_pages = range(1, math.ceil(books_count / (BOOKS_COUNT_PER_PAGE * 2)) + 1)
+    pages_count = range(1, math.ceil(books_count / (BOOKS_COUNT_PER_PAGE * 2)) + 1)
     for count, chunk in enumerate(splited_books):
-        render_page = template.render(
+        rendering_page = template.render(
             books=chunk,
             current_page=count + 1,
-            count_pages=count_pages,
+            pages_count=pages_count,
         )
         page_path = Path() / PAGES_DIR / f'index{count + 1}.html'
         with open(page_path, 'w', encoding='utf-8') as file:
-            file.write(render_page)
+            file.write(rendering_page)
 
 
 def main():

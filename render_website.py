@@ -6,52 +6,47 @@ from more_itertools import chunked, ichunked
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
-BOOKS_JSON = Path() / "media" / 'books.json'
+BOOKS_JSON_PATH = Path() / "media" / 'books.json'
 NUMBER_OF_COLUMN = 2
-BOOK_PER_PAGES = 10
+BOOKS_COUNT_PER_PAGE = 10
 PAGES_DIR = 'pages'
-TEMPLATE_HTML = 'base_template.html'
+HTML_TEMPLATE = 'base_template.html'
 
 
-def get_books_by_json():
-    with open(BOOKS_JSON, 'r', encoding='utf-8') as fh:
-        books = json.load(fh)
-    return books
+def split_by_columns_and_pages(elements, column=NUMBER_OF_COLUMN, pages=BOOKS_COUNT_PER_PAGE):
+    separated_by_columns = list(chunked(elements, column))
+    separated_by_page = ichunked(separated_by_columns, pages)
+    return separated_by_page
 
 
-def split_by_columns_and_pages(elements, column=NUMBER_OF_COLUMN, pages=BOOK_PER_PAGES):
-    splited_by_column = list(chunked(elements, column))
-    splited_by_page = ichunked(splited_by_column, pages)
-    return splited_by_page
-
-
-def get_template_html(template_html):
+def get_html_template(html_template):
     env = Environment(
         loader=FileSystemLoader('.'),
         autoescape=select_autoescape(['html', 'xml'])
     )
-    return env.get_template(template_html)
+    return env.get_template(html_template)
 
 
-def render_html_pages(splited_books, books_count):
-    template = get_template_html(TEMPLATE_HTML)
-    count_pages = range(1, math.ceil(books_count / (BOOK_PER_PAGES * 2)) + 1)
-    for count, chunk in enumerate(splited_books):
-        render_page = template.render(
+def render_html_pages(divided_books, books_count):
+    template = get_html_template(HTML_TEMPLATE)
+    pages_count = range(1, math.ceil(books_count / (BOOKS_COUNT_PER_PAGE * 2)) + 1)
+    for count, chunk in enumerate(divided_books, start=1):
+        rendering_page = template.render(
             books=chunk,
-            current_page=count + 1,
-            count_pages=count_pages,
+            current_page=count,
+            pages_count=pages_count,
         )
-        page_path = Path() / PAGES_DIR / f'index{count + 1}.html'
+        page_path = Path() / PAGES_DIR / f'index{count}.html'
         with open(page_path, 'w', encoding='utf-8') as file:
-            file.write(render_page)
+            file.write(rendering_page)
 
 
 def main():
-    books = get_books_by_json()
-    splited_books = split_by_columns_and_pages(books)
+    with open(BOOKS_JSON_PATH, 'r', encoding='utf-8') as fh:
+        books = json.load(fh)
+    divided_books = split_by_columns_and_pages(books)
     pathlib.Path(PAGES_DIR).mkdir(parents=True, exist_ok=True)
-    render_html_pages(splited_books, len(books))
+    render_html_pages(divided_books, len(books))
 
 
 if __name__ == '__main__':

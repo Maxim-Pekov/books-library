@@ -10,7 +10,7 @@ BOOKS_JSON_PATH = Path() / "media" / 'books.json'
 NUMBER_OF_COLUMN = 2
 BOOKS_COUNT_PER_PAGE = 10
 PAGES_DIR = 'pages'
-TEMPLATE_HTML = 'base_template.html'
+HTML_TEMPLATE = 'base_template.html'
 
 
 def split_by_columns_and_pages(elements, column=NUMBER_OF_COLUMN, pages=BOOKS_COUNT_PER_PAGE):
@@ -19,16 +19,16 @@ def split_by_columns_and_pages(elements, column=NUMBER_OF_COLUMN, pages=BOOKS_CO
     return separated_by_page
 
 
-def get_template_html(template_html):
+def get_html_template(html_template):
     env = Environment(
         loader=FileSystemLoader('.'),
         autoescape=select_autoescape(['html', 'xml'])
     )
-    return env.get_template(template_html)
+    return env.get_template(html_template)
 
 
 def render_html_pages(divided_books, books_count):
-    template = get_template_html(TEMPLATE_HTML)
+    template = get_html_template(HTML_TEMPLATE)
     pages_count = range(1, math.ceil(books_count / (BOOKS_COUNT_PER_PAGE * 2)) + 1)
     for count, chunk in enumerate(divided_books, start=1):
         rendering_page = template.render(

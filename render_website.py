@@ -14,9 +14,9 @@ TEMPLATE_HTML = 'base_template.html'
 
 
 def split_by_columns_and_pages(elements, column=NUMBER_OF_COLUMN, pages=BOOKS_COUNT_PER_PAGE):
-    splited_by_column = list(chunked(elements, column))
-    splited_by_page = ichunked(splited_by_column, pages)
-    return splited_by_page
+    separated_by_columns = list(chunked(elements, column))
+    separated_by_page = ichunked(separated_by_columns, pages)
+    return separated_by_page
 
 
 def get_template_html(template_html):
@@ -27,10 +27,10 @@ def get_template_html(template_html):
     return env.get_template(template_html)
 
 
-def render_html_pages(splited_books, books_count):
+def render_html_pages(divided_books, books_count):
     template = get_template_html(TEMPLATE_HTML)
     pages_count = range(1, math.ceil(books_count / (BOOKS_COUNT_PER_PAGE * 2)) + 1)
-    for count, chunk in enumerate(splited_books, start=1):
+    for count, chunk in enumerate(divided_books, start=1):
         rendering_page = template.render(
             books=chunk,
             current_page=count,
@@ -44,9 +44,9 @@ def render_html_pages(splited_books, books_count):
 def main():
     with open(BOOKS_JSON_PATH, 'r', encoding='utf-8') as fh:
         books = json.load(fh)
-    splited_books = split_by_columns_and_pages(books)
+    divided_books = split_by_columns_and_pages(books)
     pathlib.Path(PAGES_DIR).mkdir(parents=True, exist_ok=True)
-    render_html_pages(splited_books, len(books))
+    render_html_pages(divided_books, len(books))
 
 
 if __name__ == '__main__':

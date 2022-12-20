@@ -3,6 +3,6 @@ requests==2.28.1
 lxml==4.9.1
 pathvalidate==2.5.2
 argparse==1.4.0
-Jinja==23.1.2
+Jinja==3.1.2
 livereload==2.6.3
 more_itertools==9.0.0
